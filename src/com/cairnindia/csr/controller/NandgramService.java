@@ -3,6 +3,7 @@ package com.cairnindia.csr.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -45,9 +46,25 @@ public class NandgramService {
 	@Path("/getNandgramList")
 	@Produces(MediaType.APPLICATION_JSON)
 	public ArrayList<Nandgram> getNandgramList(){
-		ArrayList<Nandgram> nandgram_list= NandgramBuilder.getNandgramList();
+		ArrayList<Nandgram>  nandgram_list= NandgramBuilder.getNandgramList();
 		return nandgram_list;
 	}
+	
+	@GET
+	@Path("/getNandgramDayAttendance/{date}/{nandgram_id}/{date}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public NandgramAttendance getNandgramDayAttendance(@PathParam("date")java.sql.Date date,@PathParam("nandgram_id")int nandgram_id,@PathParam("slot")int slot){
+		try {
+			return NandgramBuilder.getDayAttendance(date,nandgram_id,slot);	
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+
 
 	@POST
 	@Path("/addAttendance")
@@ -60,10 +77,6 @@ public class NandgramService {
 		NandgramAttendance attendance=new NandgramAttendance();
 		User user=new User();
 		Image image=new Image();
-
-
-
-
 
 		String name = null;
 		int code = 200;

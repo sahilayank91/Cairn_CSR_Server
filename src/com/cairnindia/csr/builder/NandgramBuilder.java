@@ -103,6 +103,27 @@ System.out.println(proc);
 		}
 	}
 	
+	public static NandgramAttendance getDayAttendance(Date date, int id, int slot) throws SQLException{
+			NandgramAttendance current = new NandgramAttendance();
+			
+			Connection con = PostgreSQLConnection.getConnection();
+			PreparedStatement ps = con.prepareStatement("Select  * from public.\"getNandgramAttendance\"(?,?,?);");
+			ps.setDate(1,new java.sql.Date(date.getTime()));
+			ps.setInt(2, id);
+			ps.setInt(3, slot);
+			ResultSet rs = ps.executeQuery();
+			
+			
+			if(rs!=null){
+				current.setHead_count(rs.getInt("head_count"));
+				current.setImageName(rs.getString("filename"));
+				return current;
+			}	
+		return null;
+	}
+	
+	
+	
 	public static ArrayList<NandgramAttendance> getAttendance(Date date){
 		ArrayList<NandgramAttendance> day_attendance=new ArrayList<>();
 		try {

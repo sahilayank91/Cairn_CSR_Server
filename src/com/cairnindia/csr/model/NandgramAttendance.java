@@ -11,6 +11,7 @@ private double longitude,latitude;
 private Long time;
 private int head_count;
 private int slot;
+private String image_filename;
 
 public long getAttendance_id() {
 	return attendance_id;
@@ -81,6 +82,14 @@ public int getSlot() {
 @XmlElement
 public void setSlot(int slot) {
 	this.slot = slot;
+}
+
+public void setImageName(String img_name){
+	this.image_filename = img_name;
+}
+
+public String getImageName(){
+	return image_filename;
 }
 
 }
