@@ -9,6 +9,8 @@ public class DayAttendance{
 	private int head_count_slot1;
 	private int head_count_slot2;
 	private Long time;
+	private String slot1_image;
+	private String slot2_image;
 	
 	
 	
@@ -35,6 +37,24 @@ public class DayAttendance{
 	@XmlElement
 	public void setHead_count_slot2(int head_count_slot2) {
 		this.head_count_slot2 = head_count_slot2;
+	}
+	
+	
+	@XmlElement
+	public void setSlot1_image(String image){
+		this.slot1_image = image;
+	}
+	public String getSlot1_image(){
+		return slot1_image;
+	}
+	
+	@XmlElement
+	public void setSlot2_image(String image){
+		this.slot2_image = image;
+	}
+	
+	public String getSlot2_image(){
+		return slot2_image;
 	}
 	
 }

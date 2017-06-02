@@ -15,6 +15,7 @@ private int account_level;
 private String otp,firebase_token;
 private boolean verified;
 private ArrayList<Long> modules;
+private String department;
 
 public ArrayList<Team> getUser_teams() {
 	return user_teams;
@@ -103,5 +104,13 @@ public ArrayList<Long> getModules() {
 @XmlElement
 public void setModules(ArrayList<Long> modules) {
 	this.modules = modules;
+}
+
+@XmlElement
+public void setDepartment(String dept){
+	this.department = dept;
+}
+public String getDepartment(){
+	return this.department;
 }
 }

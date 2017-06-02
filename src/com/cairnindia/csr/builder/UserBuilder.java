@@ -13,6 +13,7 @@ import com.cairnindia.csr.model.User;
 import com.cairnindia.csr.model.UserProfile;
 import com.cairnindia.csr.utilities.Hashing;
 import com.cairnindia.csr.utilities.Hashing.HashingResult;
+import com.cairnindia.csr.utilities.Mailer;
 
 public class UserBuilder {
 	public static User getUser(long user_id){
@@ -67,14 +68,21 @@ public class UserBuilder {
 		Connection con;
 		try {
 			con = PostgreSQLConnection.getConnection();
-			CallableStatement proc = con.prepareCall("Select * from public.\"addUser\"(?,?,?,?,?);");
+			CallableStatement proc = con.prepareCall("Select * from public.\"addUser\"(?,?,?,?,?,?);");
 			proc.setString(1,user.getName());
 			proc.setString(2,user.getEmail());
 			proc.setString(3,user.getHash());
 			proc.setString(4,user.getSalt());
 			proc.setString(5,user.getPhone());
+			proc.setString(6,user.getDepartment());
 			System.out.println(proc);
-			proc.executeQuery(); 
+			ResultSet rs = proc.executeQuery(); 
+			rs.next();
+			String head = "Please click on the below link to activate your account\n\n";
+			String link = "http://139.59.1.193:8080/CairnCSR/rest/AuthenticationService/verify/" + rs.getLong(1);
+			String message = head+link;
+			Mailer.sendPlainTextEmail(user.getEmail(), "Your Cairn Account Activation!!",message);
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

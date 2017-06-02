@@ -65,6 +65,18 @@ public class NandgramService {
 	}
 
 
+	@GET
+	@Path("getNandgramAttendance/{nandgram_id}/{date}")
+	@Produces(MediaType.APPLICATION_JSON)
+	
+	public DayAttendance getNandgramAttendance(@PathParam("nandgram_id")Long id,@PathParam("date")java.sql.Date date) throws SQLException{
+		DayAttendance dayattendance = new DayAttendance();
+		dayattendance = NandgramBuilder.getNandgramAttendance(date,id);
+		return dayattendance;
+		
+	}
+	
+	
 
 	@POST
 	@Path("/addAttendance")

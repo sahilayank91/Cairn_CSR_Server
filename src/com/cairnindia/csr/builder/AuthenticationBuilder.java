@@ -29,6 +29,7 @@ public class AuthenticationBuilder {
 				user.setHash(rs.getString("hash"));
 				user.setSalt(rs.getString("salt"));
 				user.setAccount_level(rs.getInt("account_level"));
+				user.setVerified(rs.getBoolean("verified"));
 				return user;
 			}
 			else return null;

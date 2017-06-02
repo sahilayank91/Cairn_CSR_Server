@@ -11,10 +11,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 
-import org.joda.time.Days;
+
 
 import com.cairnindia.csr.database.PostgreSQLConnection;
-
+import com.cairnindia.csr.model.DayAttendance;
 import com.cairnindia.csr.model.Nandgram;
 import com.cairnindia.csr.model.NandgramAttendance;
 
@@ -101,7 +101,27 @@ System.out.println(proc);
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 	}
+	
+	public static DayAttendance getNandgramAttendance(Date date,Long id) throws SQLException{
+		
+		Connection con;
+		con = PostgreSQLConnection.getConnection();
+		PreparedStatement ps = con.prepareStatement("Select * from public.\"getNandgramAttendance\"(?,?);");
+		ps.setDate(1, new java.sql.Date(date.getTime()));
+		ps.setLong(2, id);
+		ResultSet rs = ps.executeQuery();
+		rs.next();
+		DayAttendance dayattendance = new DayAttendance();
+		dayattendance.setHead_count_slot1(rs.getInt("head_count_slot1"));
+		dayattendance.setHead_count_slot2(rs.getInt("head_count_slot2"));
+		dayattendance.setSlot1_image(rs.getString("slot1_image"));
+		dayattendance.setSlot2_image(rs.getString("slot2_image"));
+		return dayattendance;
+	
+	}	
+	
 	
 	public static NandgramAttendance getDayAttendance(Date date, int id, int slot) throws SQLException{
 			NandgramAttendance current = new NandgramAttendance();

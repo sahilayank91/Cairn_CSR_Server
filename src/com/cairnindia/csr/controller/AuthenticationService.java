@@ -3,8 +3,6 @@ package com.cairnindia.csr.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,14 +24,9 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.imgscalr.Scalr;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.cairnindia.csr.builder.AuthenticationBuilder;
-import com.cairnindia.csr.builder.CommentBuilder;
 import com.cairnindia.csr.builder.UserBuilder;
-import com.cairnindia.csr.model.Comment;
-import com.cairnindia.csr.model.Image;
 import com.cairnindia.csr.model.User;
 import com.cairnindia.csr.model.UserProfile;
 import com.cairnindia.csr.utilities.Hashing;
@@ -50,10 +43,11 @@ public class AuthenticationService {
 	public User authenticate(@FormParam("user_email")String user_email,@FormParam("user_password")String user_password){
 		User user=new User();
 		user=AuthenticationBuilder.getUser(user_email);
-		if(user==null){System.out.println("Invalid email"); return null;}
+		boolean authenticate = user.isVerified();
+		if(user==null && authenticate==false){System.out.println("Invalid email"); return null;}
 		else{
 			boolean authentic=Hashing.validatePassword(user_password,user.getHash(), user.getSalt());
-			if(authentic==true) {System.out.println("success");}
+			if(authentic==true && authenticate ==true) {System.out.println("success");}
 			else{ System.out.println("invalid password");user=null;}
 			return user;
 		}
@@ -93,7 +87,8 @@ public class AuthenticationService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public User register(@FormParam("user_name") String user_name,@FormParam("user_email") String user_email,
 			@FormParam("user_phone") String user_phone
-			,@FormParam("user_password") String user_password){
+			,@FormParam("user_password") String user_password,
+			@FormParam("user_dept")String user_dept){
 		HashingResult result = Hashing.createHash(user_password);
 		String hash=result.getHash();
 		String salt=result.getSalt();
@@ -103,6 +98,7 @@ public class AuthenticationService {
 		user.setEmail(user_email);
 		user.setPhone(user_phone);
 		user.setName(user_name);
+		user.setDepartment(user_dept);
 		UserBuilder.addUser(user);
 		return user;
 	}
