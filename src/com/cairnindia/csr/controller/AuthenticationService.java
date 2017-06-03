@@ -149,6 +149,16 @@ public class AuthenticationService {
 	        Mailer.sendPlainTextEmail(email,"Account Password Restoration!!",message);
 	}
 	
+	@GET
+	@Path("/verifyOTP/{email}/{otp}")
+	@Produces(MediaType.APPLICATION_JSON)
+	
+	public void verifyOTP(@PathParam("email")String email,@PathParam("otp")String otp){
+		
+		
+		
+	}
+	
 	
 	
 	

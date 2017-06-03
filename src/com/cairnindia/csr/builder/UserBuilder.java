@@ -101,6 +101,31 @@ public class UserBuilder {
 	}
 	
 	
+	public static void verifyOTP(String email,String pass) throws SQLException{
+		Connection con;
+		con = PostgreSQLConnection.getConnection();
+		PreparedStatement ps = con.prepareStatement("Select * from public.\"verifyOTP\"(?,?);");
+		ps.setString(1, email);
+		ps.setString(2, pass);
+		ResultSet rs = ps.executeQuery();
+		rs.next();
+		if(rs!=null){
+			System.out.println("Verified Successfully email: "  + email);
+			HashingResult result = Hashing.createHash("cairncsr");
+			String hash=result.getHash();
+			String salt=result.getSalt();
+			
+			PreparedStatement proc = con.prepareStatement("Select * from public.\"updatePassword\"(?,?,?);");
+			proc.setLong(1,rs.getLong("user_id"));
+			proc.setString(2,hash);
+			proc.setString(3,salt);
+			proc.executeQuery();
+			
+			String msg = "Your new password is: cairncsr\n\n. Please loging with this password and Change your Password.\n\n Thank you!!";
+			Mailer.sendPlainTextEmail(email,"Password Reset",msg);		
+		}
+	}
+	
 	
 	public static void updateUserProfile(UserProfile profile){
 		Connection con;
