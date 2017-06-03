@@ -35,10 +35,9 @@ public class UserBuilder {
 				e.printStackTrace();
 			}
 			return current;
-			
-			
 		}
 
+	
 	public static ArrayList<User> getUsers(ArrayList<Long> users_id){
 		ArrayList<User> all_users=new ArrayList<User>();
 			try {

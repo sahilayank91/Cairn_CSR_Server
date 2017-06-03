@@ -153,10 +153,8 @@ public class AuthenticationService {
 	@Path("/verifyOTP/{email}/{otp}")
 	@Produces(MediaType.APPLICATION_JSON)
 	
-	public void verifyOTP(@PathParam("email")String email,@PathParam("otp")String otp){
-		
-		
-		
+	public void verifyOTP(@PathParam("email")String email,@PathParam("otp")String otp) throws SQLException{
+		UserBuilder.verifyOTP(email,otp);
 	}
 	
 	
