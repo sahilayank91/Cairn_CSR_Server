@@ -3,8 +3,10 @@ package com.cairnindia.csr.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +33,7 @@ import com.cairnindia.csr.model.User;
 import com.cairnindia.csr.model.UserProfile;
 import com.cairnindia.csr.utilities.Hashing;
 import com.cairnindia.csr.utilities.Hashing.HashingResult;
+import com.cairnindia.csr.utilities.Mailer;
 
 @Path("/AuthenticationService")
 public class AuthenticationService {
@@ -103,6 +106,9 @@ public class AuthenticationService {
 		return user;
 	}
 
+	
+	
+	
 	@POST
 	@Path("/UpdateUserProfile/{department}/{summary}/{user_id}")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -115,6 +121,37 @@ public class AuthenticationService {
 		profile.setUser_id(user_id);
 		UserBuilder.updateUserProfile(profile);
 	}
+	
+	
+	@GET
+	@Path("/forgotPassword/{email}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public void generateOTP(@PathParam("email")String email) throws SQLException{
+		  String Capital_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	        String Small_chars = "abcdefghijklmnopqrstuvwxyz";
+	        String numbers = "0123456789";
+	        String values = Capital_chars + Small_chars +
+	                        numbers;
+	 
+	        // Using random method
+	        Random rndm_method = new Random();
+	        int len  = 8;
+	        char[] password = new char[len];
+	        for (int i = 0; i < len; i++)
+	        {
+	            password[i] =
+	              values.charAt(rndm_method.nextInt(values.length()));
+	 
+	        }
+	        UserBuilder.registerOTP(email, password.toString());
+	        
+	        String message = "Please Enter the OTP below in the popup shown in the Application - " + password.toString();
+	        Mailer.sendPlainTextEmail(email,"Account Password Restoration!!",message);
+	}
+	
+	
+	
+	
 
 	@GET
 	@Path("/RetrieveUserProfile/{user_id}")

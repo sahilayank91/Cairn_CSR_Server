@@ -89,6 +89,19 @@ public class UserBuilder {
 		}
 	}
 
+	
+	
+	public static void registerOTP(String email,String pass) throws SQLException{
+		Connection con;	
+		con = PostgreSQLConnection.getConnection();
+		PreparedStatement ps = con.prepareStatement("Select * from public.\"addOTP\"(?,?);");
+		ps.setString(1, email);
+		ps.setString(2, pass);
+		ps.executeQuery();
+	}
+	
+	
+	
 	public static void updateUserProfile(UserProfile profile){
 		Connection con;
 		try {
