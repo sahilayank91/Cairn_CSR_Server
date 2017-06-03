@@ -47,7 +47,7 @@ public class AuthenticationService {
 		User user=new User();
 		user=AuthenticationBuilder.getUser(user_email);
 		boolean authenticate = user.isVerified();
-		if(user==null && authenticate==false){System.out.println("Invalid email"); return null;}
+		if(user==null || authenticate==false){System.out.println("Invalid email"); return null;}
 		else{
 			boolean authentic=Hashing.validatePassword(user_password,user.getHash(), user.getSalt());
 			if(authentic==true && authenticate ==true) {System.out.println("success");}
@@ -153,14 +153,12 @@ public class AuthenticationService {
 	@Path("/verifyOTP/{email}/{otp}")
 	@Produces(MediaType.APPLICATION_JSON)
 	
-	public void verifyOTP(@PathParam("email")String email,@PathParam("otp")String otp) throws SQLException{
-		UserBuilder.verifyOTP(email,otp);
+	public User verifyOTP(@PathParam("email")String email,@PathParam("otp")String otp) throws SQLException{
+		User user = UserBuilder.verifyOTP(email,otp);
+		return user;
 	}
-	
-	
-	
-	
 
+	
 	@GET
 	@Path("/RetrieveUserProfile/{user_id}")
 	@Produces(MediaType.APPLICATION_JSON)

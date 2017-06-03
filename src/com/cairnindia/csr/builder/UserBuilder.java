@@ -100,8 +100,9 @@ public class UserBuilder {
 	}
 	
 	
-	public static void verifyOTP(String email,String pass) throws SQLException{
+	public static User verifyOTP(String email,String pass) throws SQLException{
 		Connection con;
+		User user = new User();
 		con = PostgreSQLConnection.getConnection();
 		PreparedStatement ps = con.prepareStatement("Select * from public.\"verifyOTP\"(?,?);");
 		ps.setString(1, email);
@@ -120,9 +121,11 @@ public class UserBuilder {
 			proc.setString(3,salt);
 			proc.executeQuery();
 			
-			String msg = "Your new password is: cairncsr\n\n. Please loging with this password and Change your Password.\n\n Thank you!!";
+			String msg = "Your new password is: cairncsr\n\n. Please login with this password and Change your Password.\n\n Thank you!!";
 			Mailer.sendPlainTextEmail(email,"Password Reset",msg);		
 		}
+		user.setUser_id(rs.getLong("user_id"));
+		return user;
 	}
 	
 	
@@ -204,6 +207,14 @@ public class UserBuilder {
 		profile.setSummary("summary");
 		updateUserProfile(profile);
 	*/
+		
+		User user = new User();
+		user.setEmail("sahilayank91@gmail.com");
+		user.setHash("9A44BE98E8180FA2AB8325A856322782672A31CF6CCD08CF");
+		user.setSalt("082221DC97FB1FA08A6017AD3CA45885B736E58463661FA4");
+		user.setName("Sahil");
+		user.setPhone("1234567890");
+		addUser(user);
 		
 	}
 	

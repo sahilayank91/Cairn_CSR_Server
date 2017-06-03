@@ -93,6 +93,12 @@
     <version>3.0-alpha-1</version>
 </dependency>
 		
+<!-- https://mvnrepository.com/artifact/com.sun.mail/javax.mail -->
+<dependency>
+    <groupId>com.sun.mail</groupId>
+    <artifactId>javax.mail</artifactId>
+    <version>1.5.2</version>
+</dependency>
 
 
 
