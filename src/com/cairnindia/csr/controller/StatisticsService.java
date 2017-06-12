@@ -40,6 +40,7 @@ import org.imgscalr.Scalr;
 
 import com.cairnindia.csr.builder.CommentBuilder;
 import com.cairnindia.csr.builder.ImageBuilder;
+import com.cairnindia.csr.builder.NandgramBuilder;
 import com.cairnindia.csr.builder.PostBuilder;
 import com.cairnindia.csr.builder.StatisticsBuilder;
 import com.cairnindia.csr.builder.TeamBuilder;
@@ -107,20 +108,20 @@ public class StatisticsService {
 			statistics.setObject_id(id);
 			statistics.setTeam(false);
 		}
-		else{
+		else if(type.equals("nandgram")){
 			//Week
 			Calendar temp=Calendar.getInstance();
 			temp.add(Calendar.DATE, -6);
 			Date start_date=temp.getTime();
-			statistics.setWeek(StatisticsBuilder.getRangeTeamSmiles(start_date, end_date, id));
+			statistics.setWeek(NandgramBuilder.getRangeHeadCount(start_date, end_date, id));
 			statistics.setWeek_dates(StatisticsBuilder.getDaywiseRangeDates(start_date, end_date));
 			
 			
 			//Month
-			statistics.setMonth(StatisticsBuilder.getTeamWeekSmiles(start_date, id));
+			statistics.setMonth(NandgramBuilder.getWeekHeadCount(start_date, id));
 			statistics.setMonth_dates(StatisticsBuilder.getWeekwiseRangeDates(start_date));
 //			//Year
-			statistics.setYear(StatisticsBuilder.getTeamMonthSmiles(end_date, id));
+			statistics.setYear(NandgramBuilder.getMonthAttendance(end_date, id));
 //			
 			statistics.setYear_dates(StatisticsBuilder.getMonthwiseRangeDates(start_date));
 			statistics.setObject_id(id);

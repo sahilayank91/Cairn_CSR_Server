@@ -35,13 +35,14 @@ import com.cairnindia.csr.model.DayAttendance;
 import com.cairnindia.csr.model.Image;
 import com.cairnindia.csr.model.Nandgram;
 import com.cairnindia.csr.model.NandgramAttendance;
+import com.cairnindia.csr.model.Statistics;
 import com.cairnindia.csr.model.User;
 
 
 @Path("/NandgramService")
 public class NandgramService {
 
-	private static final String FILE_UPLOAD_PATH = "/home/cairn/cairn_csr/nandgram";
+	private static final String FILE_UPLOAD_PATH = "/home/cairn/cairn_csr/images";
 	@GET
 	@Path("/getNandgramList")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -131,9 +132,9 @@ public class NandgramService {
 							case "user_id":
 								attendance.setUser_id(Long.valueOf(fieldValue));
 								break;
-
-
-
+							case "slot":
+								attendance.setSlot(Integer.valueOf(fieldValue));
+								break;
 
 							}
 						} else {
@@ -193,9 +194,9 @@ public class NandgramService {
 		return attendance;
 	}
 	@GET
-	@Path("/getNandgramWeekAttendance")
+	@Path("/getNandgramWeekAttendance/{nandgram_id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public ArrayList<DayAttendance> getNandgramWeekAttendance(){
+	public ArrayList<DayAttendance> getNandgramWeekAttendance(@PathParam("nandgram_id")Long id){
 		Date start_date,end_date;
 		Calendar cal=Calendar.getInstance();
 		cal.set(Calendar.HOUR_OF_DAY, 23);
@@ -211,8 +212,9 @@ public class NandgramService {
 		cal.set(Calendar.MILLISECOND, 0);
 		start_date=cal.getTime();
 
-		ArrayList<NandgramAttendance> list= NandgramBuilder.getRangeAttendance(start_date, end_date);
+		ArrayList<NandgramAttendance> list= NandgramBuilder.getRangeAttendance(start_date, end_date,id);
 		ArrayList<DayAttendance> attendance_list=new ArrayList<>();
+		
 		Calendar current=Calendar.getInstance();
 		current.setTime(new Date(start_date.getTime()));
 		
@@ -242,5 +244,5 @@ public class NandgramService {
 		return attendance_list;
 	}
 
-
+	
 }

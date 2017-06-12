@@ -1,5 +1,6 @@
 package com.cairnindia.csr.controller;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.ws.rs.Consumes;
@@ -15,6 +16,7 @@ import com.cairnindia.csr.builder.CommentBuilder;
 import com.cairnindia.csr.builder.FeedbackBuilder;
 import com.cairnindia.csr.model.Comment;
 import com.cairnindia.csr.model.Feedback;
+import com.cairnindia.csr.model.NandgramFeedback;
 import com.cairnindia.csr.model.User;
 
 @Path("/FeedbackService")
@@ -53,6 +55,35 @@ public class FeedbackService {
 	public ArrayList<Feedback>getFeedbacks(@PathParam("user_id") long user_id){
 		ArrayList<Feedback> all_feedbacks=FeedbackBuilder.getFeedbacks(user_id);
 		return all_feedbacks;
+	}
+	
+	@GET
+	@Path("/getNandgramFeedback/{nandgram_id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public NandgramFeedback getNandgramFeedback(@PathParam("nandgram_id")Long id) throws SQLException{
+			NandgramFeedback nandgramFeedback =FeedbackBuilder.getNandgramFeedback(id);	
+			return nandgramFeedback;	
+	}
+	
+	@POST
+	@Path("/addNandgramFeedback")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public NandgramFeedback putNandgramFeedback(@FormParam("nandgram_id") Long id, @FormParam("health_rating")int health_rating,@FormParam("social_rating")int social_rating,
+			@FormParam("education_rating")int education_rating,
+			@FormParam("nutrition_rating")int nutrition_rating,
+			@FormParam("womenskill_rating")int womenskill_rating) throws SQLException{
+		NandgramFeedback feedback = new NandgramFeedback();
+		feedback.setNandgram_id(id);
+		feedback.setHealth_rating(health_rating);
+		feedback.setNutrition_rating(nutrition_rating);
+		feedback.setSocial_rating(social_rating);
+		feedback.setEducation_rating(education_rating);
+		feedback.setWomenskill_rating(womenskill_rating);
+		
+		feedback = FeedbackBuilder.putNandgramFeedback(feedback);
+		
+		return feedback;
 	}
 	
 	

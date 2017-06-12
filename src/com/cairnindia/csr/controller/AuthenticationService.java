@@ -166,6 +166,19 @@ public class AuthenticationService {
 		UserProfile profile = UserBuilder.getUserProfile(user_id);
 		return profile;
 	}
+	
+	@GET 
+	@Path("/sendEmail")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	
+	public void sendEmail(@Context HttpServletRequest request){
+		
+	}
+	
+	
+	
+	
 	@POST
 	@Path("/updateProfilePic")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)

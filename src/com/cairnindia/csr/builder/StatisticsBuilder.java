@@ -212,10 +212,6 @@ public class StatisticsBuilder {
 				current.add(Calendar.DATE,1);
 
 			}
-
-
-
-
 			return week_smiles;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -223,6 +219,9 @@ public class StatisticsBuilder {
 		}
 		return week_smiles;
 	}
+	
+	
+	
 	public static ArrayList<Long> getTeamWeekSmiles(Date month, Long userid){
 		ArrayList<Long> week_smiles=new ArrayList<Long>();
 		try {

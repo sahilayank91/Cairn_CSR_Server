@@ -90,7 +90,7 @@ System.out.println(proc);
 			PreparedStatement proc=con.prepareStatement("Select * from public.\"updateNandgramAttendance\"(?,?,?,?,?,?);");
 			proc.setDouble(1, attendance.getLongitude());
 			proc.setDouble(2,attendance.getLatitude());
-			proc.setInt(3,attendance.getHead_count());
+			proc.setLong(3,attendance.getHead_count());
 			proc.setLong(4,attendance.getUser_id());
 			proc.setLong(5,attendance.getImage_id());
 			proc.setLong(6,attendance.getAttendance_id());
@@ -112,12 +112,19 @@ System.out.println(proc);
 		ps.setDate(1, new java.sql.Date(date.getTime()));
 		ps.setLong(2, id);
 		ResultSet rs = ps.executeQuery();
-		rs.next();
+	
 		DayAttendance dayattendance = new DayAttendance();
-		dayattendance.setHead_count_slot1(rs.getInt("head_count_slot1"));
-		dayattendance.setHead_count_slot2(rs.getInt("head_count_slot2"));
-		dayattendance.setSlot1_image(rs.getString("slot1_image"));
-		dayattendance.setSlot2_image(rs.getString("slot2_image"));
+		while(rs.next()){
+			if(rs.getLong("slot")==1){
+				dayattendance.setHead_count_slot1(rs.getInt("head_count"));
+				dayattendance.setSlot1_image(rs.getString("filename"));
+				
+			}else {
+				dayattendance.setHead_count_slot2(rs.getInt("head_count"));
+				dayattendance.setSlot2_image(rs.getString("filename"));
+			}		
+		}
+	
 		return dayattendance;
 	
 	}	
@@ -170,13 +177,14 @@ System.out.println(proc);
 		return day_attendance;
 	}
 
-	public static ArrayList<NandgramAttendance> getRangeAttendance(Date start_date,Date end_date){
+	public static ArrayList<NandgramAttendance> getRangeAttendance(Date start_date,Date end_date,Long id){
 		ArrayList<NandgramAttendance> days_attendance=new ArrayList<NandgramAttendance>();
 		try {
 			Connection con=PostgreSQLConnection.getConnection();
-			PreparedStatement proc=con.prepareStatement("Select * from public.\"getDaysAttendance\"(?,?);");
+			PreparedStatement proc=con.prepareStatement("Select * from public.\"getDaysAttendance\"(?,?,?);");
 			proc.setTimestamp(1, new Timestamp(start_date.getTime()));
 			proc.setTimestamp(2, new Timestamp(end_date.getTime()));
+			proc.setLong(3, id);
 		
 			ResultSet rs=proc.executeQuery();
 			
@@ -197,9 +205,35 @@ System.out.println(proc);
 		}
 		return days_attendance;
 	}
+	
+	public static ArrayList<Long> getRangeHeadCount(Date start_date,Date end_date,Long id){
+		ArrayList<Long> days_attendance=new ArrayList<Long>();
+		try {
+			Connection con=PostgreSQLConnection.getConnection();
+			PreparedStatement proc=con.prepareStatement("Select * from public.\"getDaysHeadCount\"(?,?,?);");
+			proc.setTimestamp(1, new Timestamp(start_date.getTime()));
+			proc.setTimestamp(2, new Timestamp(end_date.getTime()));
+			proc.setLong(3, id);
+		
+			ResultSet rs=proc.executeQuery();
+			
+			System.out.println(proc);
+			
+			while(rs.next()){
+				Long headcount =(long) rs.getInt("head_count");
+				days_attendance.add(headcount);
+			}
+			
+			return days_attendance;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return days_attendance;
+	}
 
 	
-	public static ArrayList<NandgramAttendance> getWeekAttendance(Date month){
+	public static ArrayList<NandgramAttendance> getWeekAttendance(Date month,Long id){
 		ArrayList<NandgramAttendance> days_attendance=new ArrayList<NandgramAttendance>();
 		try {
 			Calendar start=Calendar.getInstance();
@@ -212,7 +246,7 @@ System.out.println(proc);
 			Calendar end=Calendar.getInstance();
 			end.setTime(start.getTime());
 			end.set(Calendar.DAY_OF_MONTH,end.getActualMaximum(Calendar.DAY_OF_MONTH));
-	 days_attendance=getRangeAttendance(start.getTime(),end.getTime());
+			days_attendance=getRangeAttendance(start.getTime(),end.getTime(),id);
 		
 			//if(1==1)return null;
 			Iterator<NandgramAttendance> iterator=days_attendance.iterator();
@@ -230,6 +264,80 @@ System.out.println(proc);
 		}
 		return days_attendance;
 	}
+	
+	
+	public static ArrayList<Long> getWeekHeadCount(Date month,Long id){
+		ArrayList<Long> week_attendance=new ArrayList<Long>();
+		try {
+			Calendar start=Calendar.getInstance();
+			start.setTime(month);
+			start.set(Calendar.DAY_OF_MONTH,1);
+			start.set(Calendar.HOUR_OF_DAY,0);
+			start.set(Calendar.MINUTE,0);
+			start.set(Calendar.SECOND,0);
+			start.set(Calendar.MILLISECOND,0);
+			Calendar end=Calendar.getInstance();
+			end.setTime(start.getTime());
+			end.set(Calendar.DAY_OF_MONTH,end.getActualMaximum(Calendar.DAY_OF_MONTH));
+			ArrayList<Long> all_headcount=getRangeHeadCount(start.getTime(),end.getTime(),id);
+		
+			//if(1==1)return null;
+			Iterator<Long> iterator=all_headcount.iterator();
+			
+			Calendar current=Calendar.getInstance();
+			current.setTime(start.getTime());
+			Long week=0l;
+			while(iterator.hasNext()){
+				week+=iterator.next();
+
+				if(current.get(Calendar.DAY_OF_WEEK)==Calendar.SATURDAY ||!iterator.hasNext()){
+					week_attendance.add(week);
+					week=0l;
+				}
+				current.add(Calendar.DATE,1);
+			}
+			return week_attendance;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return week_attendance;
+	}
+	
+	
+	public static ArrayList<Long> getMonthAttendance(Date year, Long nandgram_id){
+		ArrayList<Long> month_attendance=new ArrayList<Long>();
+		try {
+			Calendar start=Calendar.getInstance();
+			start.setTime(year);
+			start.set(Calendar.MONTH,0);
+			start.set(Calendar.DAY_OF_MONTH,1);
+			Calendar end=Calendar.getInstance();
+			end.setTime(start.getTime());
+			end.set(Calendar.MONTH,end.getActualMaximum(Calendar.MONTH));
+			end.set(Calendar.DAY_OF_MONTH,end.getActualMaximum(Calendar.DAY_OF_MONTH));
+			ArrayList<Long> all_head_counts=getRangeHeadCount(start.getTime(),end.getTime(),nandgram_id);
+			Iterator<Long> iterator=all_head_counts.iterator();
+			Calendar current=Calendar.getInstance();
+			current.setTime(start.getTime());
+			Long month=0l;
+			while(iterator.hasNext()){
+				month+=iterator.next();
+
+				if(current.get(Calendar.DAY_OF_MONTH)==current.getActualMaximum(Calendar.DAY_OF_MONTH) ||!iterator.hasNext()){
+					month_attendance.add(month);
+					month=0l;
+				}
+				current.add(Calendar.DATE,1);
+			}
+			return month_attendance;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return month_attendance;
+	}
+
 	
 	public static void main(String[] args) {
 	/*NandgramAttendance attendance=new NandgramAttendance();
