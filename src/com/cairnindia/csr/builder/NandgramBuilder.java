@@ -69,7 +69,7 @@ System.out.println(proc);
 			proc.setLong(5,attendance.getUser_id());
 			proc.setLong(6,attendance.getImage_id());
 			proc.setInt(7, attendance.getSlot());
-System.out.println(proc);
+			System.out.println(proc);
 			ResultSet rs = proc.executeQuery(); /*throwing exception*/
 			if( rs.next()){
 				return (rs.getLong(1));
