@@ -44,7 +44,7 @@ public class ProductionService {
 	}
 	
 	@GET
-	@Path("/getList/{position}")
+	@Path("/getList/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public ArrayList<Fontus> getList(@PathParam("id")Long id) throws SQLException{
 		ArrayList<Fontus> list = new ArrayList<Fontus>();

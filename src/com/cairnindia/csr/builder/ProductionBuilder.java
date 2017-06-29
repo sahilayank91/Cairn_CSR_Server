@@ -52,7 +52,7 @@ public class ProductionBuilder {
 		
 		ArrayList<Fontus> list = new ArrayList<Fontus>();
 		Connection con = PostgreSQLConnection.getConnection();
-		PreparedStatement  ps= con.prepareStatement("Select * from \"getDepartmentList\"(?);");
+		PreparedStatement  ps= con.prepareStatement("Select * from \"getWaterDepartmentList\"(?);");
 		ps.setLong(1, id);
 		ResultSet rs = ps.executeQuery();
 		
