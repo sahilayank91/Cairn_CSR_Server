@@ -15,9 +15,12 @@ import java.util.Iterator;
 
 import com.cairnindia.csr.database.PostgreSQLConnection;
 import com.cairnindia.csr.model.DayAttendance;
+import com.cairnindia.csr.model.Image;
 import com.cairnindia.csr.model.Nandgram;
+import com.cairnindia.csr.model.NandgramActivity;
 import com.cairnindia.csr.model.NandgramAttendance;
 import com.cairnindia.csr.model.NandgramLocations;
+import com.cairnindia.csr.model.Post;
 
 
 public class NandgramBuilder {
@@ -361,6 +364,39 @@ System.out.println(proc);
 		}
 		return month_attendance;
 	}
+	
+	public static NandgramActivity addActivity(NandgramActivity nandgramActivity){
+		
+		ArrayList<Image> images = nandgramActivity.getImages();
+	
+		
+		Connection con;
+		try {
+
+			con = PostgreSQLConnection.getConnection();
+PreparedStatement proc=con.prepareStatement("Select * from  public.\"addActivity\"(?,?,?,?,?)");
+
+			ArrayList<Long> array=new ArrayList<Long>();
+			for(Image image:images){
+				array.add(image.getImage_id());
+			}
+			proc.setArray(1,PostgreSQLConnection.getConnection().createArrayOf("bigint", array.toArray()));
+			proc.setLong(2, nandgramActivity.getAuthor().getUser_id());
+			proc.setLong(3, nandgramActivity.getHeadCount());
+			proc.setString(4, nandgramActivity.getText());
+			proc.setString(5,nandgramActivity.getActivity());
+			System.out.println(proc);
+			ResultSet rs=proc.executeQuery();
+			rs.next();
+			nandgramActivity.setPost_id(rs.getLong(1));;
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return nandgramActivity;
+		}
+	
 
 	
 	public static void main(String[] args) {

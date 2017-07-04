@@ -3,6 +3,7 @@ package com.cairnindia.csr.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,11 +32,14 @@ import org.imgscalr.Scalr;
 
 import com.cairnindia.csr.builder.ImageBuilder;
 import com.cairnindia.csr.builder.NandgramBuilder;
+import com.cairnindia.csr.builder.PostBuilder;
 import com.cairnindia.csr.model.DayAttendance;
 import com.cairnindia.csr.model.Image;
 import com.cairnindia.csr.model.Nandgram;
+import com.cairnindia.csr.model.NandgramActivity;
 import com.cairnindia.csr.model.NandgramAttendance;
 import com.cairnindia.csr.model.NandgramLocations;
+import com.cairnindia.csr.model.Post;
 import com.cairnindia.csr.model.Statistics;
 import com.cairnindia.csr.model.User;
 
@@ -254,6 +258,129 @@ public class NandgramService {
 
 		return attendance_list;
 	}
+	
+	
+	
+	@POST
+	@Path("/addActivity")
+	@Consumes(MediaType.MULTIPART_FORM_DATA+ "; charset=utf-8")
+	@Produces(MediaType.APPLICATION_JSON)
 
+	public NandgramActivity addActivity(@Context HttpServletRequest request)
+	{
+		
+		try {
+			request.setCharacterEncoding("UTF-8");
+		} catch (UnsupportedEncodingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		
+		NandgramActivity nandgramActivity = new NandgramActivity();
+		User user=new User();
+		ArrayList<Image>images=new ArrayList<Image>();
+	
+		
+		
+        String name = null;
+        int code = 200;
+        String msg = "Files uploaded successfully";
+        if (ServletFileUpload.isMultipartContent(request)) {
+            FileItemFactory factory = new DiskFileItemFactory();
+            ServletFileUpload fileUpload = new ServletFileUpload(factory);
+            try {
+                List<FileItem> items =  fileUpload.parseRequest(request);
+                if (items != null) {
+                    Iterator<FileItem> iter = items.iterator();
+                    /*
+                     * Return true if the instance represents a simple form
+                     * field. Return false if it represents an uploaded file.
+                     */
+                    while (iter.hasNext()) {
+                        final FileItem item = iter.next();
+                        String itemName = item.getName();
+                        final String fieldName = item.getFieldName();
+                        final String fieldValue = item.getString();
+                        if (item.isFormField()) {
+                            name = fieldValue;
+                            System.out.println("Field Name: " + fieldName + ", Field Value: " + item.getString("UTF-8").trim());
+                            System.out.println("Candidate Name: " + name);
+                            switch(fieldName){
+                            case "description":
+                            	nandgramActivity.setText(item.getString("UTF-8").trim());
+                        
+                            	break;
+                            case "author":
+                            	user.setUser_id(Long.valueOf(fieldValue));
+                            	nandgramActivity.setAuthor(user);
+                            	break;
+                            case "head_count":
+                            	nandgramActivity.setHeadCount(Long.valueOf(fieldValue));
+                               	break;
+                            case "activity":
+                            	nandgramActivity.setActivity(fieldValue);
+                            	break;                            	
+                            }
+                        } else {
+                            Image image=new Image();
+                            image.setFilename("img_"+new Date().getTime()+".jpg");
+                            
+                        	itemName=image.getFilename();
+                            final File file = new File(FILE_UPLOAD_PATH    + File.separator + itemName);
+                          
+                            File dir = file.getParentFile();
+                            if(!dir.exists()) {
+                                dir.mkdir();
+                            }
+                            
+                            if(!file.exists()) {
+                                file.createNewFile();
+                            }
+                            System.out.println("Saving the file: " + file.getName());
+                    
+                            
+                          Long image_id=  ImageBuilder.addImage(image);
+                          image.setImage_id(image_id);
+                          System.out.println(image_id);
+                          if(image_id!=null)images.add(image);
+              
+                            	FileOutputStream outputStream = new FileOutputStream(file);
+                                 
+                                // reads input image from file
+                           BufferedImage inputImage = ImageIO.read(item.getInputStream());
+                           inputImage = Scalr.resize(inputImage, 500, 300);
+                                // writes to the output image in specified format
+                                boolean result = ImageIO.write(inputImage, "JPG", outputStream);
+                               
+                                 
+                        
+                            
+                                outputStream.close();
+                               
+                          
+                        }
+                    }
+                }
+            } catch (FileUploadException e) {
+                code = 404;
+                msg = e.getMessage();
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+                code = 404;
+                msg = e.getMessage();
+            }
+        }
+    	
+        nandgramActivity.setImages(images);
+		
+        return NandgramBuilder.addActivity(nandgramActivity);
+    }
+	
 	
 }
+
+
+	
+
