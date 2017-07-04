@@ -91,6 +91,17 @@ public class NandgramService {
 		return dayattendance;
 		
 	}
+	@GET
+	@Path("/getActivity/{nandgram_id}/{date}")
+	@Produces(MediaType.APPLICATION_JSON)
+	
+	public ArrayList<NandgramActivity> getNandgramActivity(@PathParam("nandgram_id")Long id,@PathParam("date")java.sql.Date date) throws SQLException{
+		ArrayList<NandgramActivity> nandgramActivity = new ArrayList<NandgramActivity>();
+		nandgramActivity = NandgramBuilder.getNandgramActivity(id,date);
+		return nandgramActivity;
+		
+		
+	}
 	
 	
 
@@ -377,6 +388,9 @@ public class NandgramService {
 		
         return NandgramBuilder.addActivity(nandgramActivity);
     }
+	
+	
+	
 	
 	
 }

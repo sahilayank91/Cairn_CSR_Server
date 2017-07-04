@@ -21,6 +21,7 @@ import com.cairnindia.csr.model.NandgramActivity;
 import com.cairnindia.csr.model.NandgramAttendance;
 import com.cairnindia.csr.model.NandgramLocations;
 import com.cairnindia.csr.model.Post;
+import com.cairnindia.csr.model.User;
 
 
 public class NandgramBuilder {
@@ -398,6 +399,29 @@ PreparedStatement proc=con.prepareStatement("Select * from  public.\"addActivity
 		}
 	
 
+	public static ArrayList<NandgramActivity> getNandgramActivity(Long nandgram_id,Date date) throws SQLException{
+		ArrayList<NandgramActivity> activity = new ArrayList<NandgramActivity>();
+		Connection con;
+		
+		con = PostgreSQLConnection.getConnection();
+		
+		PreparedStatement ps = con.prepareStatement("Select * from \"getNandgramActivity\"(?,?);");
+		ps.setLong(1, nandgram_id);
+		ps.setDate(2, new java.sql.Date(date.getTime()));
+		ResultSet rs = ps.executeQuery();
+		
+		while(rs.next()){
+			NandgramActivity current = new NandgramActivity();
+			current.setPost_id(rs.getLong("post_id"));
+			current.setHeadCount(rs.getLong("head_count"));
+			User user=UserBuilder.getUser(rs.getLong("author"));
+			current.setAuthor(user);
+			current.setText(rs.getString("text"));
+			current.setActivity(rs.getString("activity"));	
+			activity.add(current);	
+		}
+		return activity;
+	}
 	
 	public static void main(String[] args) {
 	/*NandgramAttendance attendance=new NandgramAttendance();
