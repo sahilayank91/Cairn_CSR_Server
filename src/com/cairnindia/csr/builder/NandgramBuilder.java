@@ -17,18 +17,19 @@ import com.cairnindia.csr.database.PostgreSQLConnection;
 import com.cairnindia.csr.model.DayAttendance;
 import com.cairnindia.csr.model.Nandgram;
 import com.cairnindia.csr.model.NandgramAttendance;
+import com.cairnindia.csr.model.NandgramLocations;
 
 
 public class NandgramBuilder {
 	
-	public static ArrayList<Nandgram>getNandgramList(){
+	public static ArrayList<Nandgram>getNandgramList(Long address_id){
 		Connection con;
 		ArrayList<Nandgram>nandgrams=new ArrayList<Nandgram>();
 		try {
 			con = PostgreSQLConnection.getConnection();
-			PreparedStatement proc=con.prepareStatement("Select * from public.\"getNandgramList\"();");
-		
-System.out.println(proc);
+			PreparedStatement proc=con.prepareStatement("Select * from public.\"getNandgramList\"(?);");
+			proc.setLong(1,address_id);
+            System.out.println(proc);
 			ResultSet rs = proc.executeQuery(); /*throwing exception*/
 			while( rs.next()){
 				Nandgram current=new Nandgram();
@@ -56,6 +57,29 @@ System.out.println(proc);
 		return nandgrams;
 		
 	}
+	
+	
+	public static ArrayList<NandgramLocations> getNandgramAddress() throws SQLException{
+		Connection con;
+		ArrayList<NandgramLocations> nandgrams = new ArrayList<NandgramLocations>();
+		
+		con = PostgreSQLConnection.getConnection();
+		PreparedStatement ps = con.prepareStatement("Select * from public.\"getNandgramAddress\"();");
+		System.out.println(ps);
+		ResultSet rs = ps.executeQuery();
+		while(rs.next()){
+			NandgramLocations current = new NandgramLocations();
+			current.setAddress_id(rs.getLong("address_id"));
+			current.setAddress(rs.getString("address"));
+			current.setNandghar_Count(rs.getLong("nandghar_count"));
+			nandgrams.add(current);
+		}
+		
+		return nandgrams;
+		
+		
+	}
+	
 	
 	public static Long addNandgramAttendance(NandgramAttendance attendance){
 		Connection con;

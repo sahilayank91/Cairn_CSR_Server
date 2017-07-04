@@ -35,6 +35,7 @@ import com.cairnindia.csr.model.DayAttendance;
 import com.cairnindia.csr.model.Image;
 import com.cairnindia.csr.model.Nandgram;
 import com.cairnindia.csr.model.NandgramAttendance;
+import com.cairnindia.csr.model.NandgramLocations;
 import com.cairnindia.csr.model.Statistics;
 import com.cairnindia.csr.model.User;
 
@@ -44,12 +45,22 @@ public class NandgramService {
 
 	private static final String FILE_UPLOAD_PATH = "/home/cairn/cairn_csr/images";
 	@GET
-	@Path("/getNandgramList")
+	@Path("/getNandgramList/{address_id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public ArrayList<Nandgram> getNandgramList(){
-		ArrayList<Nandgram>  nandgram_list= NandgramBuilder.getNandgramList();
+	public ArrayList<Nandgram> getNandgramList(@PathParam("address_id")Long address_id){
+		ArrayList<Nandgram>  nandgram_list= NandgramBuilder.getNandgramList(address_id);
 		return nandgram_list;
 	}
+	
+	
+	@GET
+	@Path("/getNandgramAddress")
+	@Produces(MediaType.APPLICATION_JSON)
+	public ArrayList<NandgramLocations> getNandgramAddress() throws SQLException{
+		ArrayList<NandgramLocations>  nandgram_list= NandgramBuilder.getNandgramAddress();
+		return nandgram_list;
+	}
+	
 	
 	@GET
 	@Path("/getNandgramDayAttendance/{date}/{nandgram_id}/{date}")
