@@ -375,7 +375,7 @@ System.out.println(proc);
 		try {
 
 			con = PostgreSQLConnection.getConnection();
-PreparedStatement proc=con.prepareStatement("Select * from  public.\"addActivity\"(?,?,?,?,?)");
+PreparedStatement proc=con.prepareStatement("Select * from  public.\"addActivity\"(?,?,?,?,?,?,?)");
 
 			ArrayList<Long> array=new ArrayList<Long>();
 			for(Image image:images){
@@ -386,6 +386,8 @@ PreparedStatement proc=con.prepareStatement("Select * from  public.\"addActivity
 			proc.setLong(3, nandgramActivity.getHeadCount());
 			proc.setString(4, nandgramActivity.getText());
 			proc.setString(5,nandgramActivity.getActivity());
+			proc.setLong(6, nandgramActivity.getNandgramId());
+			proc.setLong(7, nandgramActivity.getAddressId());
 			System.out.println(proc);
 			ResultSet rs=proc.executeQuery();
 			rs.next();
@@ -408,20 +410,61 @@ PreparedStatement proc=con.prepareStatement("Select * from  public.\"addActivity
 		PreparedStatement ps = con.prepareStatement("Select * from \"getNandgramActivity\"(?,?);");
 		ps.setLong(1, nandgram_id);
 		ps.setDate(2, new java.sql.Date(date.getTime()));
+		System.out.print(ps);
 		ResultSet rs = ps.executeQuery();
 		
 		while(rs.next()){
 			NandgramActivity current = new NandgramActivity();
+						
 			current.setPost_id(rs.getLong("post_id"));
 			current.setHeadCount(rs.getLong("head_count"));
 			User user=UserBuilder.getUser(rs.getLong("author"));
 			current.setAuthor(user);
+			current.setTime(rs.getTimestamp("timestamp"));
 			current.setText(rs.getString("text"));
 			current.setActivity(rs.getString("activity"));	
+			current.setNandgramId(rs.getLong("nandgram_id"));
+			ArrayList<Image> all_images=ImageBuilder.getActivityImages(rs.getLong("post_id"));
+			current.setImages(all_images);
 			activity.add(current);	
 		}
+
 		return activity;
 	}
+	
+
+	public static ArrayList<NandgramActivity> getNandgramActivityviaAddress(Long address_id,Date date) throws SQLException{
+		ArrayList<NandgramActivity> activity = new ArrayList<NandgramActivity>();
+		Connection con;
+		
+		con = PostgreSQLConnection.getConnection();
+		
+		PreparedStatement ps = con.prepareStatement("Select * from \"getNandgramActivity\"(?,?);");
+		ps.setLong(1, address_id);
+		ps.setDate(2, new java.sql.Date(date.getTime()));
+		System.out.print(ps);
+		ResultSet rs = ps.executeQuery();
+		
+		while(rs.next()){
+			NandgramActivity current = new NandgramActivity();
+						
+			current.setPost_id(rs.getLong("post_id"));
+			current.setHeadCount(rs.getLong("head_count"));
+			User user=UserBuilder.getUser(rs.getLong("author"));
+			current.setAuthor(user);
+			current.setTime(rs.getTimestamp("timestamp"));
+			current.setText(rs.getString("text"));
+			current.setActivity(rs.getString("activity"));	
+			current.setNandgramId(rs.getLong("nandgram_id"));
+			current.setAddressId(rs.getLong("address_id"));
+			ArrayList<Image> all_images=ImageBuilder.getActivityImages(rs.getLong("post_id"));
+			current.setImages(all_images);
+			activity.add(current);	
+		}
+	
+		return activity;
+	}
+	
 	
 	public static void main(String[] args) {
 	/*NandgramAttendance attendance=new NandgramAttendance();

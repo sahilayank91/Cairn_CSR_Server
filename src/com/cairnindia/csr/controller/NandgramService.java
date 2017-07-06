@@ -103,6 +103,17 @@ public class NandgramService {
 		
 	}
 	
+	@GET
+	@Path("/getActivityviaAddress/{address_id}/{date}")
+	@Produces(MediaType.APPLICATION_JSON)
+	
+	public ArrayList<NandgramActivity> getNandgramActivityviaAddress(@PathParam("address_id")Long id,@PathParam("date")java.sql.Date date) throws SQLException{
+		ArrayList<NandgramActivity> nandgramActivity = new ArrayList<NandgramActivity>();
+		nandgramActivity = NandgramBuilder.getNandgramActivityviaAddress(id,date);
+		return nandgramActivity;
+		
+		
+	}
 	
 
 	@POST
@@ -331,7 +342,12 @@ public class NandgramService {
                                	break;
                             case "activity":
                             	nandgramActivity.setActivity(fieldValue);
-                            	break;                            	
+                            	break;
+                            case "nandgram_id":
+                            	nandgramActivity.setNandgramId(Long.valueOf(fieldValue));
+                            	break;
+                            case "address_id":
+                            	nandgramActivity.setAddressId(Long.valueOf(fieldValue));
                             }
                         } else {
                             Image image=new Image();

@@ -6,15 +6,32 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "nandgramActivity")
+@XmlRootElement(name = "nandgram")
 public class NandgramActivity {
-	private long post_id,head_count;
+	private long post_id,head_count,nandgram_id,address_id;
 	private User author;	
 	private String text;
 	private Long time;
 	private ArrayList<Image> images;
 	private String activity;
 	
+	
+	public long getNandgramId() {
+		return nandgram_id;
+	}
+	@XmlElement
+	public void setNandgramId(long nandgram_id) {
+		this.nandgram_id = nandgram_id;
+	}
+	
+
+	public long getAddressId() {
+		return address_id;
+	}
+	@XmlElement
+	public void setAddressId(long address_id) {
+		this.address_id = address_id;
+	}
 	public long getPost_id() {
 		return post_id;
 	}

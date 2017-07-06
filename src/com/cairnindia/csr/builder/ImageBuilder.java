@@ -65,6 +65,36 @@ public class ImageBuilder {
 		}
 		return all_images;
 	}
+	
+	
+	public static ArrayList<Image> getActivityImages(long post_id){
+		ArrayList<Image> all_images=null;
+		try {
+			Connection con=PostgreSQLConnection.getConnection();
+			PreparedStatement proc=con.prepareStatement("Select * from \"getActivityImages\"(?);");
+			proc.setLong(1, post_id);
+			ResultSet rs=proc.executeQuery();
+			all_images=new ArrayList<Image>();
+			while(rs.next()){
+				Image current=new Image();
+				current.setImage_id(rs.getLong("image_id"));
+				current.setFilename(rs.getString("image_filename"));
+				current.setCaption(rs.getString("image_caption"));
+				current.setTime(rs.getTimestamp("image_time"));
+				ArrayList<Long> image_likes=new ArrayList<Long>();
+				ResultSet likes = rs.getArray("image_likes").getResultSet();
+				while(likes.next()){
+					image_likes.add(likes.getLong(2));
+				}
+				current.setLikes(image_likes);
+		       all_images.add(current);	
+			}
+			} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return all_images;
+	}
 
 	 public static Long addImage(Image image){
 				Connection con;
