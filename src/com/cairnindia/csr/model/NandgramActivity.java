@@ -11,6 +11,7 @@ public class NandgramActivity {
 	private long post_id,head_count,nandgram_id,address_id;
 	private User author;	
 	private String text;
+	private String nandgram_name;
 	private Long time;
 	private ArrayList<Image> images;
 	private String activity;
@@ -24,6 +25,14 @@ public class NandgramActivity {
 		this.nandgram_id = nandgram_id;
 	}
 	
+	public String getNandgramName(){
+		return nandgram_name;
+	}
+	
+	@XmlElement
+	public void setNandgramName(String name){
+		this.nandgram_name =name;
+	}
 
 	public long getAddressId() {
 		return address_id;

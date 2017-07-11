@@ -172,7 +172,9 @@ public class NandgramService {
 							case "slot":
 								attendance.setSlot(Integer.valueOf(fieldValue));
 								break;
-
+							case "att_num":
+								attendance.setAtt_Num(Long.valueOf(fieldValue));
+								break;
 							}
 						} else {
 
@@ -348,6 +350,10 @@ public class NandgramService {
                             	break;
                             case "address_id":
                             	nandgramActivity.setAddressId(Long.valueOf(fieldValue));
+                            	break;
+                            case "nandgram_name":
+                            	nandgramActivity.setNandgramName(fieldValue);
+                            	break;
                             }
                         } else {
                             Image image=new Image();

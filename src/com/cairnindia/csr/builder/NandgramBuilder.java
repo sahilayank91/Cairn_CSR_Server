@@ -89,7 +89,7 @@ public class NandgramBuilder {
 		Connection con;
 		try {
 			con = PostgreSQLConnection.getConnection();
-			PreparedStatement proc=con.prepareStatement("Select * from public.\"addNandgramAttendance\"(?,?,?,?,?,?,?);");
+			PreparedStatement proc=con.prepareStatement("Select * from public.\"addNandgramAttendance\"(?,?,?,?,?,?,?,?);");
 			proc.setDouble(1, attendance.getLongitude());
 			proc.setDouble(2,attendance.getLatitude());
 			proc.setInt(3,attendance.getHead_count());
@@ -97,6 +97,7 @@ public class NandgramBuilder {
 			proc.setLong(5,attendance.getUser_id());
 			proc.setLong(6,attendance.getImage_id());
 			proc.setInt(7, attendance.getSlot());
+			proc.setLong(8,attendance.getAtt_Num());
 			System.out.println(proc);
 			ResultSet rs = proc.executeQuery(); /*throwing exception*/
 			if( rs.next()){
@@ -375,7 +376,7 @@ System.out.println(proc);
 		try {
 
 			con = PostgreSQLConnection.getConnection();
-PreparedStatement proc=con.prepareStatement("Select * from  public.\"addActivity\"(?,?,?,?,?,?,?)");
+PreparedStatement proc=con.prepareStatement("Select * from  public.\"addActivity\"(?,?,?,?,?,?,?,?)");
 
 			ArrayList<Long> array=new ArrayList<Long>();
 			for(Image image:images){
@@ -388,6 +389,7 @@ PreparedStatement proc=con.prepareStatement("Select * from  public.\"addActivity
 			proc.setString(5,nandgramActivity.getActivity());
 			proc.setLong(6, nandgramActivity.getNandgramId());
 			proc.setLong(7, nandgramActivity.getAddressId());
+			proc.setString(8, nandgramActivity.getNandgramName());
 			System.out.println(proc);
 			ResultSet rs=proc.executeQuery();
 			rs.next();
@@ -424,6 +426,7 @@ PreparedStatement proc=con.prepareStatement("Select * from  public.\"addActivity
 			current.setText(rs.getString("text"));
 			current.setActivity(rs.getString("activity"));	
 			current.setNandgramId(rs.getLong("nandgram_id"));
+			current.setNandgramName(rs.getString("nandgram_name"));
 			ArrayList<Image> all_images=ImageBuilder.getActivityImages(rs.getLong("post_id"));
 			current.setImages(all_images);
 			activity.add(current);	
@@ -439,7 +442,7 @@ PreparedStatement proc=con.prepareStatement("Select * from  public.\"addActivity
 		
 		con = PostgreSQLConnection.getConnection();
 		
-		PreparedStatement ps = con.prepareStatement("Select * from \"getNandgramActivity\"(?,?);");
+		PreparedStatement ps = con.prepareStatement("Select * from \"getNandgramActivityviaAddress\"(?,?);");
 		ps.setLong(1, address_id);
 		ps.setDate(2, new java.sql.Date(date.getTime()));
 		System.out.print(ps);
@@ -459,6 +462,7 @@ PreparedStatement proc=con.prepareStatement("Select * from  public.\"addActivity
 			current.setAddressId(rs.getLong("address_id"));
 			ArrayList<Image> all_images=ImageBuilder.getActivityImages(rs.getLong("post_id"));
 			current.setImages(all_images);
+			current.setNandgramName(rs.getString("nandgram_name"));
 			activity.add(current);	
 		}
 	

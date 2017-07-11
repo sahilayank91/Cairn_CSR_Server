@@ -12,6 +12,7 @@ private Long time;
 private int head_count;
 private int slot;
 private String image_filename;
+public Long att_num;
 
 public long getAttendance_id() {
 	return attendance_id;
@@ -20,6 +21,17 @@ public long getAttendance_id() {
 public void setAttendance_id(long attendance_id) {
 	this.attendance_id = attendance_id;
 }
+
+public Long getAtt_Num(){
+	return att_num;
+}
+
+@XmlElement
+public void setAtt_Num(Long att_num){
+	this.att_num = att_num;
+}
+
+
 public long getNandgram_id() {
 	return nandgram_id;
 }
